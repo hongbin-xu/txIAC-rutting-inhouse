@@ -134,7 +134,7 @@ if check_password():
                 idmax = st.number_input("id end", min_value=idmin, max_value=min(90000, idmin + 4499), value = idmin+50, step= 1)
                 # Load data
                 if st.button("Update"):
-                    st.session_state.data, st.session_state.height_max = dataLoad(_conn=conn)
+                    st.session_state.data = dataLoad(_conn=conn)
                     st.write(st.session_state.data.head())
 
             with col12:
