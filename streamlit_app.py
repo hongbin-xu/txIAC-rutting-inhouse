@@ -59,7 +59,7 @@ def dataLoad(_conn):#, segID=None, idmin = None, idmax=None):
 @st.cache_data
 def dataProc(data, filterType, kneighbors):
     ncol = data["transID"].max()+1
-    dataArray = data["height"].values().reshape([-1, ncol])
+    dataArray = data["height"].values.reshape([-1, ncol])
     data_filtered = data.copy().drop(columns = "height")
     # Filter data
     if filterType == "median":
@@ -144,7 +144,6 @@ if check_password():
                     st.session_state.data_filtered = dataProc(data=st.session_state.data, filterType=filterType, kneighbors=kneighbors)
                     st.write(st.session_state.data_filtered.head())
             if 'data' in st.session_state:
-                st.write(str(st.session_state.data["ROUTE_NAME"][0])+ ", DFO: "+str(st.session_state.data["DFO"].min())+ "~"+ str(st.session_state.data["DFO"].max()))
                 # plot surface
                 surfPlot(data=st.session_state.data)
 
