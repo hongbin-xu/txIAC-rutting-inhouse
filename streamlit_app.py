@@ -100,7 +100,7 @@ def lonExtrac(data, data_filtered, id, ):
 def surfPlot(data, data_filtered):
     # hover information
     z = data["height"].values.reshape([425, -1])
-    fig = go.Figure(data=[go.Surface(z=z, x=np.arange(4096), y=np.arange(425))], labels = {"x": "Transverse ID", "y": "Longitudinal ID", "z": "height"})
+    fig = go.Figure(data=[go.Surface(z=z, x=np.arange(4096), y=np.arange(425))])
     fig.update_layout(xaxis_title="Transverse ID",
                       yaxis_title="Longitudinal ID", zaxis_title="height")
 
