@@ -46,22 +46,20 @@ def check_password():
         return True
 
 @st.cache_data
-def dataLoad(_conn, segID=None, idmin = None, idmax=None):
+def dataLoad(_conn):#, segID=None, idmin = None, idmax=None):
     """
     mode1: select for each segment
     mode2: select for multiple segment
-    creating 2d array of the height measurement
     """
-    data = conn.query('SELECT * from pathway_raw_fm365_sep13 WHERE id BETWEEN '+ str(idmin) +' AND ' + str(idmax)+';')
-    dataArray = np.array([np.array(data["height"][i].split(b',')).astype("float") for i in range(data.shape[0])])
-    data = data.drop(columns = "height")
-    data[[str(i) for i in range(1536)]] = dataArray
-    height_max = data
-    del dataArray
-    return data, height_max
+    data = conn.query('SELECT * from 20mph_Grided_data_DistanceCorrected_longformat')# WHERE id BETWEEN '+ str(idmin) +' AND ' + str(idmax)+';')
+    return data
+
+
+
+
 
 @st.cache_data
-def transExtrac(segData, id, max_val):
+def transExtrac(data,data_filtered):
     # Extract transverse profile
     scanData = segData.loc[(segData["id"]==id), ["tranStep"]+ [str(i) for i in range(1536)]].reset_index(drop=True)
     scanData_v1 = pd.DataFrame({"DIST":scanData["tranStep"][0]*np.arange(1536), "Height":scanData[[str(i) for i in range(1536)]].values.flatten()})
@@ -74,7 +72,7 @@ def transExtrac(segData, id, max_val):
     return scanData_v1
 
 @st.cache_data
-def lonExtrac(segData, id, max_val):
+def lonExtrac(data, data_filtered):
     scanData = segData[["id", "OFFSET", str(id)]].rename(columns = {str(id): "Height"})
                 # Plot transverse profile
     fig = px.line(scanData, x ="id", y="Height", labels = {"id": "Longitudinal id","Height": "Height (mm}"}, template = "plotly_dark")
