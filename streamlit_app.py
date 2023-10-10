@@ -124,14 +124,14 @@ if check_password():
 
             with col12:
 
-            # Load data
-            if st.button("Update"):
-                st.session_state.data, st.session_state.height_max = dataLoad(_conn=conn, idmin= idmin, idmax=idmax)
-            
-            if 'data' in st.session_state:
-                st.write(str(st.session_state.data["ROUTE_NAME"][0])+ ", DFO: "+str(st.session_state.data["DFO"].min())+ "~"+ str(st.session_state.data["DFO"].max()))
-                # plot surface
-                surfPlot(data=st.session_state.data)
+                # Load data
+                if st.button("Update"):
+                    st.session_state.data, st.session_state.height_max = dataLoad(_conn=conn, idmin= idmin, idmax=idmax)
+                
+                if 'data' in st.session_state:
+                    st.write(str(st.session_state.data["ROUTE_NAME"][0])+ ", DFO: "+str(st.session_state.data["DFO"].min())+ "~"+ str(st.session_state.data["DFO"].max()))
+                    # plot surface
+                    surfPlot(data=st.session_state.data)
 
     if 'data' in st.session_state:
         with col2:
