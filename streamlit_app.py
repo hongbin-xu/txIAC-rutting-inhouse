@@ -117,9 +117,12 @@ if check_password():
             st.subheader("Suface")
             col11, col12 = st.columns(2)
             with col11:
-                idmin = st.number_input("id start", min_value=1, max_value=90000-1, value = 1, step= 1)
+                with col11:
+                    idmin = st.number_input("id start", min_value=1, max_value=90000-1, value = 1, step= 1)
+                with col12:
+                    idmax = st.number_input("id end", min_value=idmin, max_value=min(90000, idmin + 4499), value = idmin+50, step= 1)
+
             with col12:
-                idmax = st.number_input("id end", min_value=idmin, max_value=min(90000, idmin + 4499), value = idmin+50, step= 1)
 
             # Load data
             if st.button("Update"):
