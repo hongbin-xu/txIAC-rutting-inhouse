@@ -134,14 +134,15 @@ if check_password():
                 idmax = st.number_input("id end", min_value=idmin, max_value=min(90000, idmin + 4499), value = idmin+50, step= 1)
                 # Load data
                 if st.button("Update"):
-                    st.session_state.data, st.session_state.height_max = dataLoad(_conn=conn, idmin= idmin, idmax=idmax)
+                    st.session_state.data, st.session_state.height_max = dataLoad(_conn=conn)
+                    st.write(st.session_state.data.head())
 
             with col12:
                 filterType = st.selectbox("Select filter", options = ["mean", "median"])
                 kneighbors = st.selectbox("Window size", options = [3, 5])
                 if st.button("Apply filter"):
                     st.session_state.data_filtered = dataProc(data=st.session_state.data, filterType=filterType, kneighbors=kneighbors)
-
+                    st.write(st.session_state.data_filtered.head())
             if 'data' in st.session_state:
                 st.write(str(st.session_state.data["ROUTE_NAME"][0])+ ", DFO: "+str(st.session_state.data["DFO"].min())+ "~"+ str(st.session_state.data["DFO"].max()))
                 # plot surface
