@@ -101,7 +101,7 @@ def surfOrigin(data):
     # hover information
     z = data["height"].values.reshape([425, -1])
     fig = go.Figure(data=[go.Surface(z=z, x=np.arange(4096), y=np.arange(425))])
-    fig.update_layout(scene=dict(xaxis_title="Transverse ID", yaxis_title="Longitudinal ID", zaxis_title="height"))
+    fig.update_layout(title = "Original", scene=dict(xaxis_title="Transverse ID", yaxis_title="Longitudinal ID", zaxis_title="height"),template="plotly")
 
     #fig['layout']['xaxis']['autorange'] = "reversed"
     st.plotly_chart(fig, use_container_width=True, theme = None)
@@ -111,7 +111,7 @@ def surFiltered(data):
     # hover information
     z = data["height"].values.reshape([425, -1])
     fig = go.Figure(data=[go.Surface(z=z, x=np.arange(4096), y=np.arange(425))])
-    fig.update_layout(scene=dict(xaxis_title="Transverse ID", yaxis_title="Longitudinal ID", zaxis_title="height"))
+    fig.update_layout(title = "Filtered", scene=dict(xaxis_title="Transverse ID", yaxis_title="Longitudinal ID", zaxis_title="height"),template="plotly")
 
     #fig['layout']['xaxis']['autorange'] = "reversed"
     st.plotly_chart(fig, use_container_width=True, theme = None)
@@ -140,7 +140,6 @@ if check_password():
                 kneighbors = st.selectbox("Window size", options = [3, 5, 7, 9], index =0)
                 if st.button("Apply filter"):
                     st.session_state.data_filtered = dataProc(data=st.session_state.data, filterType=filterType, kneighbors=kneighbors)
-                    st.write(st.session_state.data_filtered.head())
             if 'data' in st.session_state:
                 # plot surface
                 surfOrigin(data=st.session_state.data)
