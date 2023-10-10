@@ -138,8 +138,8 @@ if check_password():
                     st.write(st.session_state.data.head())
 
             with col12:
-                filterType = st.selectbox("Select filter", options = ["mean", "median"], index = "median")
-                kneighbors = st.selectbox("Window size", options = [3, 5], index =3)
+                filterType = st.selectbox("Select filter", options = ["mean", "median"], index = 1)
+                kneighbors = st.selectbox("Window size", options = [3, 5], index =0)
                 if st.button("Apply filter"):
                     st.session_state.data_filtered = dataProc(data=st.session_state.data, filterType=filterType, kneighbors=kneighbors)
                     st.write(st.session_state.data_filtered.head())
