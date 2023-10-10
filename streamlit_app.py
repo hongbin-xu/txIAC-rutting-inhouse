@@ -80,7 +80,7 @@ def transExtrac(data, data_filtered, id):
     transProfile = pd.melt(transProfile, id_vars = ["id", "lonID", "lonOFFSET", "transID", "transOFFSET"], value_vars = ["original", "filtered"], var_name = "filter", value_name = "height")
     
     # Plot transverse profile
-    fig = px.line(transProfile, x="transID", y="height", labels = {"DIST": "Transverse OFFSET (mm)", "Height": "Height (mm}"}, template = "plotly_dark")
+    fig = px.line(transProfile, x="transID", y="height", color = "filter", labels = {"DIST": "Transverse OFFSET (mm)", "Height": "Height (mm}"}, template = "plotly_dark")
     st.plotly_chart(fig, use_container_width=True, theme = None)
     return transProfile
 
@@ -90,7 +90,7 @@ def lonExtrac(data, data_filtered, id):
     lonProfile["filtered"] = data_filtered.loc[data_filtered["transID"]==id, "height"].values
     lonProfile = pd.melt(lonProfile, id_vars = ["id", "lonID", "lonOFFSET", "transID", "transOFFSET"], value_vars = ["original", "filtered"], var_name = "filter", value_name = "height")
 
-    fig = px.line(lonProfile, x ="lonID", y="height", labels = {"id": "Longitudinal id","Height": "Height (mm}"}, template = "plotly_dark")
+    fig = px.line(lonProfile, x ="lonID", y="height", color = "filter", labels = {"id": "Longitudinal id","Height": "Height (mm}"}, template = "plotly_dark")
     st.plotly_chart(fig, use_container_width=True, theme = None)
     return lonProfile
 
