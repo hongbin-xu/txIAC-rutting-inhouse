@@ -122,7 +122,8 @@ def surfPlot(data):
 if check_password():    
     # Page title
     conn = st.experimental_connection("mysql", type="sql")
-    
+    st.session_state.data = dataLoad(_conn=conn)
+
     # MySQL connection
     col1, col2 = st.columns(2, gap = "medium")
     with col1:
@@ -134,12 +135,11 @@ if check_password():
                 idmax = st.number_input("id end", min_value=idmin, max_value=min(90000, idmin + 4499), value = idmin+50, step= 1)
                 # Load data
                 if st.button("Update"):
-                    st.session_state.data = dataLoad(_conn=conn)
                     st.write(st.session_state.data.head())
 
             with col12:
                 filterType = st.selectbox("Select filter", options = ["mean", "median"], index = 1)
-                kneighbors = st.selectbox("Window size", options = [3, 5], index =0)
+                kneighbors = st.selectbox("Window size", options = [3, 5, 7, 9], index =0)
                 if st.button("Apply filter"):
                     st.session_state.data_filtered = dataProc(data=st.session_state.data, filterType=filterType, kneighbors=kneighbors)
                     st.write(st.session_state.data_filtered.head())
