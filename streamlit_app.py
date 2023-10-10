@@ -99,6 +99,7 @@ def lonExtrac(data, data_filtered, id, ):
 @st.cache_data
 def surfPlot(data, data_filtered):
     # hover information
+    st.write(data["height"])
     fig = go.Figure(data=[go.Surface(z=data["height"], x=data["lonID"], y=data["transID"])])
     fig.update_layout(title='Mt Bruno Elevation', 
                     width=500, height=500,
