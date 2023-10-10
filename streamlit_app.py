@@ -65,14 +65,14 @@ def dataProc(data, filterType, kneighbors):
     if filterType == "median":
         dataArray = ndimage.median_filter(dataArray, size=(kneighbors, kneighbors))
     
-    #if filterType == "median":
-    #    dataArray = data[data["id"].isin(segID)]
+    if filterType == "mean":
+        dataArray = ndimage.uniform_filter(dataArray, size=(kneighbors, kneighbors))
     data_filtered["height"] = dataArray.flatten()
     return data_filtered
 
 
 @st.cache_data
-def transExtrac(data,data_filtered):
+def transExtrac(data, data_filtered, id):
     # Extract transverse profile
     scanData = segData.loc[(segData["id"]==id), ["tranStep"]+ [str(i) for i in range(1536)]].reset_index(drop=True)
     scanData_v1 = pd.DataFrame({"DIST":scanData["tranStep"][0]*np.arange(1536), "Height":scanData[[str(i) for i in range(1536)]].values.flatten()})
@@ -85,7 +85,7 @@ def transExtrac(data,data_filtered):
     return scanData_v1
 
 @st.cache_data
-def lonExtrac(data, data_filtered):
+def lonExtrac(data, data_filtered, id, ):
     scanData = segData[["id", "OFFSET", str(id)]].rename(columns = {str(id): "Height"})
                 # Plot transverse profile
     fig = px.line(scanData, x ="id", y="Height", labels = {"id": "Longitudinal id","Height": "Height (mm}"}, template = "plotly_dark")
@@ -153,10 +153,7 @@ if check_password():
                 st.subheader("Transverse Profile")
                 id_ = st.number_input("Transverse profile", min_value=idmin, max_value=idmax, step = 1)
                 segID = id_//900+1
-                #if st.button("Update transverse profile"):
-                # Extract transverse profile
                 scanData_v1 = transExtrac(segData = st.session_state.data, id=id_, max_val = st.session_state.height_max)
-
                 # View and download data
                 st.download_button(label="Download transverse profile", data=scanData_v1.to_csv().encode('utf-8'), file_name="transProfile_seg_" +str(segID)+"_scan_"+str(id_)+".csv", mime = "csv")
 
