@@ -80,13 +80,13 @@ def transExtrac(data, data_filtered, id):
     transProfile = pd.melt(transProfile, id_vars = ["id", "lonID", "lonOFFSET", "transID", "transOFFSET"], value_vars = ["height", "filtered"], var_name = "filter", value_name = "height")
     
     # Plot transverse profile
-    fig = px.line(scanData_v1, x="DIST", y="Height", labels = {"DIST": "Transverse OFFSET (mm)", "Height": "Height (mm}"}, template = "plotly_dark")
+    fig = px.line(transProfile, x="DIST", y="Height", labels = {"DIST": "Transverse OFFSET (mm)", "Height": "Height (mm}"}, template = "plotly_dark")
     fig.layout.yaxis.range = [0,max_val]
     st.plotly_chart(fig, use_container_width=True, theme = None)
     return transProfile
 
 @st.cache_data
-def lonExtrac(data, data_filtered, id, ):
+def lonExtrac(data, data_filtered, id):
     lonProfile = data.loc[data["transID"]==id].reset_index(drop=True).rename(columns = {"height": "original"})
     lonProfile["filtered"] = data_filtered.loc[data_filtered["transID"]==id, "height"].values
     lonProfile = pd.melt(lonProfile, id_vars = ["id", "lonID", "lonOFFSET", "transID", "transOFFSET"], value_vars = ["height", "filtered"], var_name = "filter", value_name = "height")
@@ -129,11 +129,8 @@ if check_password():
             st.subheader("Suface")
             col11, col12 = st.columns(2)
             with col11:
-                idmin = st.number_input("id start", min_value=0, max_value=423, value = 0, step= 1)
-                idmax = st.number_input("id end", min_value=idmin, max_value=424, value = 424, step= 1)
-                # Load data
-                if st.button("Update"):
-                    st.write(st.session_state.data.head())
+                idmin = st.number_input("id start", min_value=0, max_value=423, value = 0, step= 1, disabled = True)
+                idmax = st.number_input("id end", min_value=idmin, max_value=424, value = 424, step= 1, disabled = True)
 
             with col12:
                 filterType = st.selectbox("Select filter", options = ["mean", "median"], index = 1)
@@ -152,19 +149,19 @@ if check_password():
             with st.container():
                 st.subheader("Transverse Profile")
                 id_ = st.number_input("Transverse profile", min_value=idmin, max_value=idmax, step = 1)
-                scanData_v1 = transExtrac(segData = st.session_state.data, id=id_, max_val = st.session_state.height_max)
+                trans_profile = transExtrac(data = st.session_state.data, data_filtered = st.session_state.data_filtered, id=id_)
                 # View and download data
-                st.download_button(label="Download transverse profile", data=scanData_v1.to_csv().encode('utf-8'), file_name="transProfile_seg_" +str(segID)+"_scan_"+str(id_)+".csv", mime = "csv")
+                st.download_button(label="Download transverse profile", data=trans_profile.to_csv().encode('utf-8'), file_name="transProfile_" +str(id_)+".csv", mime = "csv")
 
             with st.container():
                 st.subheader("Longitudinal Profile")
                 id_x = st.number_input("Longitudinal profile", min_value=0, max_value=1536,value=0, step = 1)
 
                 # Extract transverse profile
-                scanData_v2 = lonExtrac(segData = st.session_state.data, id=id_x, max_val = st.session_state.height_max)
+                lon_profile = lonExtrac(data = st.session_state.data, data_filtered = st.session_state.data_filtered, id=id_x)
                 
                 # View and download data
-                st.download_button(label="Download longitudinal profile", data=scanData_v2.to_csv().encode('utf-8'), file_name="lonProfile_" +str(id_x)+"_"+ str(idmin) +" to " + str(idmax)+ ".csv", mime = "csv")
+                st.download_button(label="Download longitudinal profile", data=lon_profile.to_csv().encode('utf-8'), file_name="lonProfile_" +str(id_x)+"_"+ str(idmin) +" to " + str(idmax)+ ".csv", mime = "csv")
 
     
     
