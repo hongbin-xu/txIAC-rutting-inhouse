@@ -97,12 +97,21 @@ def lonExtrac(data, data_filtered, id, ):
     return lonProfile
 
 @st.cache_data
-def surfPlot(data, data_filtered):
+def surOrigin(data):
     # hover information
     z = data["height"].values.reshape([425, -1])
     fig = go.Figure(data=[go.Surface(z=z, x=np.arange(4096), y=np.arange(425))])
-    fig.update_layout(scene=dict(xaxis_title="Transverse ID",
-                      yaxis_title="Longitudinal ID", zaxis_title="height"))
+    fig.update_layout(scene=dict(xaxis_title="Transverse ID", yaxis_title="Longitudinal ID", zaxis_title="height"))
+
+    #fig['layout']['xaxis']['autorange'] = "reversed"
+    st.plotly_chart(fig, use_container_width=True, theme = None)
+
+@st.cache_data
+def surFiltered(data):
+    # hover information
+    z = data["height"].values.reshape([425, -1])
+    fig = go.Figure(data=[go.Surface(z=z, x=np.arange(4096), y=np.arange(425))])
+    fig.update_layout(scene=dict(xaxis_title="Transverse ID", yaxis_title="Longitudinal ID", zaxis_title="height"))
 
     #fig['layout']['xaxis']['autorange'] = "reversed"
     st.plotly_chart(fig, use_container_width=True, theme = None)
@@ -134,7 +143,10 @@ if check_password():
                     st.write(st.session_state.data_filtered.head())
             if 'data' in st.session_state:
                 # plot surface
-                surfPlot(data=st.session_state.data, data_filtered= st.session_state.data_filtered)
+                surfOrigin(data=st.session_state.data)
+            if 'data_filtered' in st.session_state:
+                surFiltered(data=st.session_state.data_filtered)
+
 
     if 'data' in st.session_state:
         with col2:
