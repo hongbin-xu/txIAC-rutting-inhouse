@@ -136,12 +136,12 @@ if check_password():
             st.subheader("Suface")
             col11, col12 = st.columns(2)
             with col11:
-                heightHist(st.session_state.data)
+                #heightHist(st.session_state.data)
                 idmin = st.number_input("id start", min_value=0, max_value=423, value = 0, step= 1, disabled = True)
                 idmax = st.number_input("id end", min_value=idmin, max_value=424, value = 424, step= 1, disabled = True)
 
             with col12:
-                heightCdf(st.session_state.data)
+                #heightCdf(st.session_state.data)
                 filterType = st.selectbox("Select filter", options = ["mean", "median"], index = 1)
                 kneighbors = st.selectbox("Window size", options = [3, 5, 7, 9], index =0)
                 if st.button("Apply filter"):
@@ -153,7 +153,7 @@ if check_password():
                 surFiltered(data=st.session_state.data_filtered)
 
 
-    if 'data' in st.session_state:
+    if 'data_filtered' in st.session_state:
         with col2:
             with st.container():
                 st.subheader("Transverse Profile")
