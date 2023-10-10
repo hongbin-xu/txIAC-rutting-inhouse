@@ -101,9 +101,7 @@ def surfPlot(data, data_filtered):
     # hover information
     st.write(data["height"])
     fig = go.Figure(data=[go.Surface(z=data["height"], x=data["lonID"], y=data["transID"])])
-    fig.update_layout(title='Mt Bruno Elevation', 
-                    width=500, height=500,
-                    margin=dict(l=65, r=50, b=65, t=90))
+    fig.update_layout(title='Mt Bruno Elevation')
 
     #fig['layout']['xaxis']['autorange'] = "reversed"
     st.plotly_chart(fig, use_container_width=True, theme = None)
