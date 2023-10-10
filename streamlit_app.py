@@ -164,7 +164,7 @@ if check_password():
 
             with st.container():
                 st.subheader("Longitudinal Profile")
-                id_x = st.number_input("Longitudinal profile", min_value=0, max_value=1536,value=0, step = 1)
+                id_x = st.number_input("Longitudinal profile", min_value=0, max_value=4095,value=0, step = 1)
 
                 # Extract transverse profile
                 lon_profile = lonExtrac(data = st.session_state.data, data_filtered = st.session_state.data_filtered, id=id_x)
