@@ -71,6 +71,10 @@ def dataProc(data, filterType, kneighbors):
     data_filtered["height"] = dataArray.flatten()
     return data_filtered
 
+@st.cache_data
+def heightDist(data):
+    fig = px.histogram(data, x = "height", title = "height distribution")
+    st.plotly_chart(fig, use_container_width=True, theme = None)
 
 @st.cache_data
 def transExtrac(data, data_filtered, id):
@@ -99,7 +103,7 @@ def surfOrigin(data):
     # hover information
     z = data["height"].values.reshape([425, -1])
     fig = go.Figure(data=[go.Surface(z=z, x=np.arange(4096), y=np.arange(425))])
-    fig.update_layout(title = "Original", scene=dict(xaxis_title="Transverse ID", yaxis_title="Longitudinal ID", zaxis_title="height"),template="plotly", height = 500)
+    fig.update_layout(title = "Original", scene=dict(xaxis_title="Transverse ID", yaxis_title="Longitudinal ID", zaxis_title="height"),template="plotly", height = 600)
 
     #fig['layout']['xaxis']['autorange'] = "reversed"
     st.plotly_chart(fig, use_container_width=True, theme = None)
@@ -109,7 +113,7 @@ def surFiltered(data):
     # hover information
     z = data["height"].values.reshape([425, -1])
     fig = go.Figure(data=[go.Surface(z=z, x=np.arange(4096), y=np.arange(425))])
-    fig.update_layout(title = "Filtered", scene=dict(xaxis_title="Transverse ID", yaxis_title="Longitudinal ID", zaxis_title="height"),template="plotly", height = 500)
+    fig.update_layout(title = "Filtered", scene=dict(xaxis_title="Transverse ID", yaxis_title="Longitudinal ID", zaxis_title="height"),template="plotly", height = 600)
 
     #fig['layout']['xaxis']['autorange'] = "reversed"
     st.plotly_chart(fig, use_container_width=True, theme = None)
@@ -119,6 +123,7 @@ if check_password():
     # Page title
     conn = st.experimental_connection("mysql", type="sql")
     st.session_state.data = dataLoad(_conn=conn)
+    heightDist(st.session_state.data)
 
     # MySQL connection
     col1, col2 = st.columns(2, gap = "medium")
