@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 from scipy import ndimage
+import plotly.graph_objects as go
 
 st.set_page_config(layout="wide", 
                    page_title='IAC-Rutting Verification',
@@ -74,48 +75,36 @@ def dataProc(data, filterType, kneighbors):
 @st.cache_data
 def transExtrac(data, data_filtered, id):
     # Extract transverse profile
-    scanData = segData.loc[(segData["id"]==id), ["tranStep"]+ [str(i) for i in range(1536)]].reset_index(drop=True)
-    scanData_v1 = pd.DataFrame({"DIST":scanData["tranStep"][0]*np.arange(1536), "Height":scanData[[str(i) for i in range(1536)]].values.flatten()})
-
+    transProfile = data.loc[data["lonID"]==id].reset_index(drop=True).rename(columns = {"height": "original"})
+    transProfile["filtered"] = data_filtered.loc[data_filtered["lonID"]==id, "height"].values
+    transProfile = pd.melt(transProfile, id_vars = ["id", "lonID", "lonOFFSET", "transID", "transOFFSET"], value_vars = ["height", "filtered"], var_name = "filter", value_name = "height")
+    
     # Plot transverse profile
     fig = px.line(scanData_v1, x="DIST", y="Height", labels = {"DIST": "Transverse OFFSET (mm)", "Height": "Height (mm}"}, template = "plotly_dark")
-    #fig.update_layout(yaxis_range=[0,max_val])
     fig.layout.yaxis.range = [0,max_val]
     st.plotly_chart(fig, use_container_width=True, theme = None)
-    return scanData_v1
+    return transProfile
 
 @st.cache_data
 def lonExtrac(data, data_filtered, id, ):
-    scanData = segData[["id", "OFFSET", str(id)]].rename(columns = {str(id): "Height"})
-                # Plot transverse profile
+    lonProfile = data.loc[data["transID"]==id].reset_index(drop=True).rename(columns = {"height": "original"})
+    lonProfile["filtered"] = data_filtered.loc[data_filtered["transID"]==id, "height"].values
+    lonProfile = pd.melt(lonProfile, id_vars = ["id", "lonID", "lonOFFSET", "transID", "transOFFSET"], value_vars = ["height", "filtered"], var_name = "filter", value_name = "height")
+
     fig = px.line(scanData, x ="id", y="Height", labels = {"id": "Longitudinal id","Height": "Height (mm}"}, template = "plotly_dark")
-    #fig.update_layout(yaxis_range=[0,max_val])
     fig.layout.yaxis.range = [0,max_val]
     st.plotly_chart(fig, use_container_width=True, theme = None)
-    return scanData
+    return lonProfile
 
 @st.cache_data
-def surfPlot(data):
-    dataArray = data[[str(i) for i in range(1536)]]
+def surfPlot(data, data_filtered):
     # hover information
-    # id, segID, scanID, dataNum, DFO + mm, transverse mm
-    customData= np.stack([data["segID"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # SegID 0
-                         data["DFO"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # DFO 1
-                         data["OFFSET"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # DFO offset 2
-                         np.arange(dataArray.shape[1]).reshape(-1,dataArray.shape[1]).repeat(dataArray.shape[0], axis=0)*data["tranStep"].values.reshape(-1,1)], axis = -1)
-    
-    fig = px.imshow(dataArray, origin = "lower", 
-                    labels = {"x": "Transverse id", "y": "Longitudinal id", "color": "Height (mm)"},
-                    y = data["id"], #np.arange(dataArray.shape[0])*lonStep,
-                    aspect="auto", 
-                    height = 900)
+    fig = go.Figure(data=[go.Surface(z=data["height"], x="lonID", y="transID")])
+    fig.update_layout(title='Mt Bruno Elevation', autosize=False,
+                    width=500, height=500,
+                    margin=dict(l=65, r=50, b=65, t=90))
 
-    fig.update(data=[{'customdata': customData,
-                      'hovertemplate': "<br>".join(["id: %{y:.0f}", "segID: %{customdata[0]:.0f}", "DFO: %{customdata[1]:.3f} mile",
-                                                    "lonOFFSET: %{customdata[2]:.0f} mm", "transID: %{x:.0f}",
-                                                    "transOFFSET: %{customdata[3]:.0f} mm","Height: %{z} mm"])}])
-
-    fig['layout']['xaxis']['autorange'] = "reversed"
+    #fig['layout']['xaxis']['autorange'] = "reversed"
     st.plotly_chart(fig, use_container_width=True, theme = None)
 
 # Check authentication
@@ -131,8 +120,8 @@ if check_password():
             st.subheader("Suface")
             col11, col12 = st.columns(2)
             with col11:
-                idmin = st.number_input("id start", min_value=1, max_value=90000-1, value = 1, step= 1)
-                idmax = st.number_input("id end", min_value=idmin, max_value=min(90000, idmin + 4499), value = idmin+50, step= 1)
+                idmin = st.number_input("id start", min_value=0, max_value=423, value = 0, step= 1)
+                idmax = st.number_input("id end", min_value=idmin, max_value=424, value = 424, step= 1)
                 # Load data
                 if st.button("Update"):
                     st.write(st.session_state.data.head())
@@ -145,14 +134,13 @@ if check_password():
                     st.write(st.session_state.data_filtered.head())
             if 'data' in st.session_state:
                 # plot surface
-                surfPlot(data=st.session_state.data)
+                surfPlot(data=st.session_state.data, data_filtered= st.session_state.data_filtered)
 
     if 'data' in st.session_state:
         with col2:
             with st.container():
                 st.subheader("Transverse Profile")
                 id_ = st.number_input("Transverse profile", min_value=idmin, max_value=idmax, step = 1)
-                segID = id_//900+1
                 scanData_v1 = transExtrac(segData = st.session_state.data, id=id_, max_val = st.session_state.height_max)
                 # View and download data
                 st.download_button(label="Download transverse profile", data=scanData_v1.to_csv().encode('utf-8'), file_name="transProfile_seg_" +str(segID)+"_scan_"+str(id_)+".csv", mime = "csv")
