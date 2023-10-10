@@ -123,13 +123,14 @@ if check_password():
     # Page title
     conn = st.experimental_connection("mysql", type="sql")
     st.session_state.data = dataLoad(_conn=conn)
-    heightDist(st.session_state.data)
 
     # MySQL connection
     col1, col2 = st.columns(2, gap = "medium")
     with col1:
         with st.container():
             st.subheader("Suface")
+            heightDist(st.session_state.data)
+
             col11, col12 = st.columns(2)
             with col11:
                 idmin = st.number_input("id start", min_value=0, max_value=423, value = 0, step= 1, disabled = True)
