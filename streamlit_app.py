@@ -59,15 +59,15 @@ def dataLoad(_conn):#, segID=None, idmin = None, idmax=None):
 @st.cache_data
 def dataProc(data, filterType, kneighbors):
     ncol = data["transID"].max()+1
-    dataArray = data["Height"].values().reshape([-1, ncol])
-    data_filtered = data.copy().drop(columns = "Height")
+    dataArray = data["height"].values().reshape([-1, ncol])
+    data_filtered = data.copy().drop(columns = "height")
     # Filter data
-    if filterType == "mean":
+    if filterType == "median":
         dataArray = ndimage.median_filter(dataArray, size=(kneighbors, kneighbors))
     
-    if filterType == "median":
-        dataArray = data[data["id"].isin(segID)]
-    data_filtered["Height"] = dataArray.flatten()
+    #if filterType == "median":
+    #    dataArray = data[data["id"].isin(segID)]
+    data_filtered["height"] = dataArray.flatten()
     return data_filtered
 
 
@@ -138,7 +138,7 @@ if check_password():
                     st.write(st.session_state.data.head())
 
             with col12:
-                filterType = st.selectbox("Select filter", options = ["mean", "median"])
+                filterType = st.selectbox("Select filter", options = ["mean", "median"], value = "median")
                 kneighbors = st.selectbox("Window size", options = [3, 5])
                 if st.button("Apply filter"):
                     st.session_state.data_filtered = dataProc(data=st.session_state.data, filterType=filterType, kneighbors=kneighbors)
