@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
+from scipy import ndimage
 
 st.set_page_config(layout="wide", 
                    page_title='IAC-Rutting Verification',
@@ -55,7 +56,19 @@ def dataLoad(_conn):#, segID=None, idmin = None, idmax=None):
     return data
 
 
-
+@st.cache_data
+def dataProc(data, filterType, kneighbors):
+    ncol = data["transID"].max()+1
+    dataArray = data["Height"].values().reshape([-1, ncol])
+    data_filtered = data.copy().drop(columns = "Height")
+    # Filter data
+    if filterType == "mean":
+        dataArray = ndimage.median_filter(dataArray, size=(kneighbors, kneighbors))
+    
+    if filterType == "median":
+        dataArray = data[data["id"].isin(segID)]
+    data_filtered["Height"] = dataArray.flatten()
+    return data_filtered
 
 
 @st.cache_data
@@ -115,7 +128,6 @@ if check_password():
     with col1:
         with st.container():
             st.subheader("Suface")
-            col11, col12 = st.columns(2)
             with col11:
                 idmin = st.number_input("id start", min_value=1, max_value=90000-1, value = 1, step= 1)
                 idmax = st.number_input("id end", min_value=idmin, max_value=min(90000, idmin + 4499), value = idmin+50, step= 1)
@@ -125,11 +137,9 @@ if check_password():
 
             with col12:
                 filterType = st.selectbox("Select filter", options = ["mean", "median"])
-
-                kneighbors = st.selectbox("neighbors", options = [1, 2, 3, 4, 5])
-                # Load data
-                if st.button("Update"):
-                    st.session_state.data, st.session_state.height_max = dataLoad(_conn=conn, idmin= idmin, idmax=idmax)
+                kneighbors = st.selectbox("Window size", options = [3, 5])
+                if st.button("Apply filter"):
+                    st.session_state.data_filtered = dataProc(data=st.session_state.data, filterType=filterType, kneighbors=kneighbors)
 
             if 'data' in st.session_state:
                 st.write(str(st.session_state.data["ROUTE_NAME"][0])+ ", DFO: "+str(st.session_state.data["DFO"].min())+ "~"+ str(st.session_state.data["DFO"].max()))
