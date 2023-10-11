@@ -146,7 +146,7 @@ if check_password():
     conn = st.experimental_connection("mysql", type="sql")
     st.session_state.data = dataLoad(_conn=conn)
 
-    with st.sidebar():
+    with st.sidebar:
         with st.container():
             st.subheader("Suface")
             col11, col12 = st.columns(2)
