@@ -83,7 +83,7 @@ def dataProc(data, filterType, kneighbors):
 
 @st.cache_data
 def heightHist(data):
-    fig = px.histogram(data, x = "height", height = 200)
+    fig = px.histogram(data, x = "height", height=400)
     fig.update_layout(hovermode="x unified")
     st.plotly_chart(fig, use_container_width=True, theme = None)
 
@@ -154,10 +154,10 @@ if check_password():
             st.write("Distribution of height")
             heightHist(st.session_state.data)
 
-            st.write("Remove outliers")
+            st.write("Outliers")
             st.slider("Data range to keep", min_value=st.session_state.data["height"].min(), 
                       max_value=st.session_state.data["height"].max(), value = [st.session_state.data["height"].min(),st.session_state.data["height"].max()])
-            if st.button("Apply"):
+            if st.button("Remove outliers"):
                 st.session_state.data_filtered = dataProc(data=st.session_state.data, filterType=filterType, kneighbors=kneighbors)
             
             st.write("Filter")
