@@ -135,17 +135,27 @@ if check_password():
         with st.container():
             st.subheader("Suface")
             col11, col12 = st.columns(2)
+            st.write("Load data")
             with col11:
-                #heightHist(st.session_state.data)
                 idmin = st.number_input("id start", min_value=0, max_value=423, value = 0, step= 1, disabled = True)
-                idmax = st.number_input("id end", min_value=idmin, max_value=424, value = 424, step= 1, disabled = True)
-
             with col12:
-                #heightCdf(st.session_state.data)
+                idmax = st.number_input("id end", min_value=idmin, max_value=424, value = 424, step= 1, disabled = True)
+           
+            st.write("Distribution of height")
+                heightHist(st.session_state.data)
+
+            st.write("Remove outliers")
+            st.slider("Data range to keep", min_value=st.session_state.data["height"].min(), 
+                      max_value=st.session_state.data["height"].max(), value = [st.session_state.data["height"].min(),st.session_state.data["height"].max()])
+            
+            st.write("Filter)
+            with col11:
                 filterType = st.selectbox("Select filter", options = ["mean", "median"], index = 1)
+            with col12:
                 kneighbors = st.selectbox("Window size", options = [3, 5, 7, 9, 11, 15, 25], index =0)
-                if st.button("Apply filter"):
-                    st.session_state.data_filtered = dataProc(data=st.session_state.data, filterType=filterType, kneighbors=kneighbors)
+            if st.button("Apply filter"):
+                st.session_state.data_filtered = dataProc(data=st.session_state.data, filterType=filterType, kneighbors=kneighbors)
+
             if 'data' in st.session_state:
                 # plot surface
                 surfOrigin(data=st.session_state.data)
