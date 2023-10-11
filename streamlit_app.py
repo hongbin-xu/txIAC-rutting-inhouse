@@ -125,7 +125,8 @@ def surfOrigin(data):
     # hover information
     z = data["height"].values.reshape([425, -1])
     fig = go.Figure(data=[go.Surface(z=z, x=np.arange(4096), y=np.arange(425))])
-    fig.update_layout(title = "Original", scene=dict(xaxis_title="Transverse ID", yaxis_title="Longitudinal ID", zaxis_title="height"),template="plotly", height = 600)
+    fig.update_layout(title = "Original", scene=dict(xaxis_title="Transverse ID", yaxis_title="Longitudinal ID", zaxis_title="height"),template="plotly", height = 600, 
+                    scene = dict(zaxis = dict(range=[-0.3,0.25])))
     fig.update_traces(hovertemplate = "<b>TransID</b>: %{x}<br>" + "<b>lonID</b>: %{y}<br>"+ "<b>Height</b>: %{z}<br>")
     #fig['layout']['xaxis']['autorange'] = "reversed"
     st.plotly_chart(fig, use_container_width=True, theme = None)
