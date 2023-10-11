@@ -89,7 +89,7 @@ def dataProc(data, filterType, kneighbors):
 @st.cache_data
 def heightHist(data):
     fig = px.histogram(data, x = "height")
-    fig.update_layout(hovermode="x unified")
+    fig.update_layout(hovermode="x unified", height = 300)
     st.plotly_chart(fig, use_container_width=True, theme = None)
 
 @st.cache_data
@@ -185,10 +185,6 @@ if check_password():
     # MySQL connection
     st.subheader("Suface")
     col1, col2 = st.columns(2)
-    
-    with st.container():
-        heightHist(data=st.session_state.data)
-
     with col1:
         with st.container():
             if 'data' in st.session_state:
@@ -198,6 +194,8 @@ if check_password():
         with st.container():
             if 'data_filtered' in st.session_state:
                 surFiltered(data=st.session_state.data_filtered)
+    with st.container():
+        heightHist(data=st.session_state.data)
     
     col1, col2 = st.columns(2)
     if 'data_filtered' in st.session_state:
