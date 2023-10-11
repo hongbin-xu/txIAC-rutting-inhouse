@@ -146,9 +146,7 @@ if check_password():
     conn = st.experimental_connection("mysql", type="sql")
     st.session_state.data = dataLoad(_conn=conn)
 
-    # MySQL connection
-    col1, col2 = st.columns(2, gap = "medium")
-    with col1:
+    with st.sidebar():
         with st.container():
             st.subheader("Suface")
             col11, col12 = st.columns(2)
@@ -157,9 +155,6 @@ if check_password():
                 
             with col12:
                 idmax = st.number_input("id end", min_value=idmin, max_value=424, value = 424, step= 1, disabled = True)
-           
-            st.write("Distribution of height")
-            heightHist(st.session_state.data)
 
             st.write("Outliers")
             col13, col14 = st.columns(2)
@@ -180,6 +175,11 @@ if check_password():
             if st.button("Apply"):
                 st.session_state.data_filtered = dataProc(data=st.session_state.data_filtered, filterType=filterType, kneighbors=kneighbors)
 
+    # MySQL connection
+    col1, col2 = st.columns(2, gap = "medium")
+    with col1:
+        with st.container():
+            st.subheader("Suface")
             if 'data' in st.session_state:
                 # plot surface
                 surfOrigin(data=st.session_state.data)
