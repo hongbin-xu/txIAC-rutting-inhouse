@@ -148,7 +148,7 @@ if check_password():
             st.slider("Data range to keep", min_value=st.session_state.data["height"].min(), 
                       max_value=st.session_state.data["height"].max(), value = [st.session_state.data["height"].min(),st.session_state.data["height"].max()])
             
-            st.write("Filter)
+            st.write("Filter")
             with col11:
                 filterType = st.selectbox("Select filter", options = ["mean", "median"], index = 1)
             with col12:
