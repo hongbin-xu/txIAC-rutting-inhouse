@@ -84,7 +84,7 @@ def dataProc(data, filterType, kneighbors):
 @st.cache_data
 def heightHist(data):
     fig = px.histogram(data, x = "height", height = 200)
-    fig.update_layout(hovermode="x_unified")
+    fig.update_layout(hovermode="x unified")
     st.plotly_chart(fig, use_container_width=True, theme = None)
 
 @st.cache_data
