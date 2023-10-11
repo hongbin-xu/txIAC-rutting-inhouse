@@ -162,9 +162,9 @@ if check_password():
             st.write("Outliers")
             col13, col14 = st.columns(2)
             with col13: 
-                lower_bound = st.number_input("lower bound", min_value = st.session_state.data["height"].min(), max_value=st.session_state.data["height"].max(), value = 0.03, disabled = True)
+                lower_bound = st.number_input("lower bound", min_value = st.session_state.data["height"].min(), max_value=st.session_state.data["height"].max(), value = 0.03)
             with col14: 
-                upper_bound = st.number_input("lower bound", min_value = st.session_state.data["height"].min(), max_value=st.session_state.data["height"].max(), value = 0.15, disabled = True)
+                upper_bound = st.number_input("lower bound", min_value = st.session_state.data["height"].min(), max_value=st.session_state.data["height"].max(), value = 0.15)
 
             if st.button("Remove outliers"):
                 st.session_state.data_filtered = outlierRemove(data=st.session_state.data_filtered, lower = lower_bound, upper = upper_bound)
