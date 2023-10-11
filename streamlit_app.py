@@ -142,7 +142,7 @@ if check_password():
                 idmax = st.number_input("id end", min_value=idmin, max_value=424, value = 424, step= 1, disabled = True)
            
             st.write("Distribution of height")
-                heightHist(st.session_state.data)
+            heightHist(st.session_state.data)
 
             st.write("Remove outliers")
             st.slider("Data range to keep", min_value=st.session_state.data["height"].min(), 
