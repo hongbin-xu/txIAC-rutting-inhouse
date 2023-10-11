@@ -59,19 +59,18 @@ def dataLoad(_conn):#, segID=None, idmin = None, idmax=None):
 
 @st.cache_data
 def outlierRemove(data, lower, upper):
-    data_filtered = data.copy().drop(columns = "height")
-    ncol = data["transID"].max()+1
-    dataArray = data["height"].values.reshape([-1, ncol])
-    outlier_location = np.where((dataArray<0)|(dataArray>0.2))
-    outlier_replace = interpn(points = (np.arange(dataArray.shape[0]), np.arange(dataArray.shape[1])), values=dataArray,xi = outlier_location, method="linear")
-    data_filtered["height"] = dataArray.flatten()
+    data_filtered = data.copy()
+    outlier_location = data_filtered.loc[(data_filtered["height"]<lower)|(data_filtered["height"]>upper), ["transID", "lonID"]]    
+    outlier_replace = griddata(points = (data_filtered["lonID"].values, data_filtered["transID"].values), values=data_filtered["height"].values.reshape(-1,1),
+                            xi = (outlier_location["lonID"].values, outlier_location["transID"].values), method="linear")
+    data_filtered.loc[(data_filtered["height"]<lower)|(data_filtered["height"]>upper), "height"] = outlier_replace
     return data_filtered
 
 
 @st.cache_data
 def dataProc(data, filterType, kneighbors):
     ncol = data["transID"].max()+1
-    dataArray = data["height"].values.reshape([-1, ncol])
+    dataArray = data["height"].copy().values.reshape([-1, ncol])
     data_filtered = data.copy().drop(columns = "height")
     # Filter data
     if filterType == "median":
