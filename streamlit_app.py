@@ -4,6 +4,7 @@ import numpy as np
 import plotly.express as px
 from scipy import ndimage
 import plotly.graph_objects as go
+from scipy.interpolate import interpn
 
 st.set_page_config(layout="wide", 
                    page_title='IAC-Rutting Verification',
@@ -56,6 +57,16 @@ def dataLoad(_conn):#, segID=None, idmin = None, idmax=None):
     data = conn.query('SELECT * from 20mph_Grided_data_DistanceCorrected_longformat')# WHERE id BETWEEN '+ str(idmin) +' AND ' + str(idmax)+';')
     return data
 
+@st.cache_data
+def outlierRemove(data, lower, upper):
+    data_filtered = data.copy().drop(columns = "height")
+    ncol = data["transID"].max()+1
+    dataArray = data["height"].values.reshape([-1, ncol])
+    outlier_location = np.where((dataArray<0)|(dataArray>0.2))
+    outlier_replace = interpn(points = (np.arange(dataArray.shape[0]), np.arange(dataArray.shape[1])), values=dataArray,xi = outlier_location, method="linear")
+    data_filtered["height"] = dataArray.flatten()
+    return data_filtered
+
 
 @st.cache_data
 def dataProc(data, filterType, kneighbors):
@@ -65,7 +76,6 @@ def dataProc(data, filterType, kneighbors):
     # Filter data
     if filterType == "median":
         dataArray = ndimage.median_filter(dataArray, size=(kneighbors, kneighbors))
-    
     if filterType == "mean":
         dataArray = ndimage.uniform_filter(dataArray, size=(kneighbors, kneighbors))
     data_filtered["height"] = dataArray.flatten()
@@ -73,7 +83,8 @@ def dataProc(data, filterType, kneighbors):
 
 @st.cache_data
 def heightHist(data):
-    fig = px.histogram(data, x = "height")
+    fig = px.histogram(data, x = "height", height = 200)
+    fig.update_layout(hovermode="x_unified")
     st.plotly_chart(fig, use_container_width=True, theme = None)
 
 @st.cache_data
@@ -135,7 +146,6 @@ if check_password():
         with st.container():
             st.subheader("Suface")
             col11, col12 = st.columns(2)
-            st.write("Load data")
             with col11:
                 idmin = st.number_input("id start", min_value=0, max_value=423, value = 0, step= 1, disabled = True)
             with col12:
@@ -147,14 +157,16 @@ if check_password():
             st.write("Remove outliers")
             st.slider("Data range to keep", min_value=st.session_state.data["height"].min(), 
                       max_value=st.session_state.data["height"].max(), value = [st.session_state.data["height"].min(),st.session_state.data["height"].max()])
+            if st.button("Apply"):
+                st.session_state.data_filtered = dataProc(data=st.session_state.data, filterType=filterType, kneighbors=kneighbors)
             
             st.write("Filter")
             with col11:
                 filterType = st.selectbox("Select filter", options = ["mean", "median"], index = 1)
             with col12:
                 kneighbors = st.selectbox("Window size", options = [3, 5, 7, 9, 11, 15, 25], index =0)
-            if st.button("Apply filter"):
-                st.session_state.data_filtered = dataProc(data=st.session_state.data, filterType=filterType, kneighbors=kneighbors)
+            if st.button("Apply"):
+                st.session_state.data_filtered = dataProc(data=st.session_state.data_filtered, filterType=filterType, kneighbors=kneighbors)
 
             if 'data' in st.session_state:
                 # plot surface
