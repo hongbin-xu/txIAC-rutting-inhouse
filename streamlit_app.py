@@ -71,7 +71,7 @@ def outlierRemove(data, lower, upper):
     data_filtered = data.copy()
     data_filtered.loc[data_filtered["height"]<lower, "height"] = lower
     data_filtered.loc[data_filtered["height"]>upper, "height"] = upper
-    return data
+    return data_filtered
 
 @st.cache_data
 def dataProc(data, filterType, kneighbors):
