@@ -184,6 +184,8 @@ if check_password():
 
     # MySQL connection
     st.subheader("Suface")
+    with st.container():
+        heightHist(data=st.session_state.data)
     col1, col2 = st.columns(2)
     with col1:
         with st.container():
@@ -194,8 +196,7 @@ if check_password():
         with st.container():
             if 'data_filtered' in st.session_state:
                 surFiltered(data=st.session_state.data_filtered)
-    with st.container():
-        heightHist(data=st.session_state.data)
+
     
     col1, col2 = st.columns(2)
     if 'data_filtered' in st.session_state:
