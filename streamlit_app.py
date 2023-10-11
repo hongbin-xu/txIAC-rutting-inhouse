@@ -156,6 +156,7 @@ if check_password():
             with col12:
                 idmax = st.number_input("id end", min_value=idmin, max_value=424, value = 424, step= 1, disabled = True)
 
+            st.subheader("Filter")
             st.write("Outliers")
             col13, col14 = st.columns(2)
             with col13: 
@@ -166,7 +167,7 @@ if check_password():
             if st.button("Remove outliers"):
                 st.session_state.data_filtered = outlierRemove(data=st.session_state.data, lower = lower_bound, upper = upper_bound)
             
-            st.write("Filter")
+            st.write("Smoothing")
             col15, col16 = st.columns(2)
             with col15:
                 filterType = st.selectbox("Select filter", options = ["mean", "median"], index = 1)
@@ -174,6 +175,8 @@ if check_password():
                 kneighbors = st.selectbox("Window size", options = [3, 5, 7, 9, 11, 15, 25], index =0)
             if st.button("Apply"):
                 st.session_state.data_filtered = dataProc(data=st.session_state.data_filtered, filterType=filterType, kneighbors=kneighbors)
+            
+            st.subheader("Inspect profiles")
             id_ = st.number_input("Transverse profile", min_value=idmin, max_value=idmax, step = 1)
             id_x = st.number_input("Longitudinal profile", min_value=0, max_value=4095,value=0, step = 1)
 
