@@ -174,6 +174,9 @@ if check_password():
                 kneighbors = st.selectbox("Window size", options = [3, 5, 7, 9, 11, 15, 25], index =0)
             if st.button("Apply"):
                 st.session_state.data_filtered = dataProc(data=st.session_state.data_filtered, filterType=filterType, kneighbors=kneighbors)
+            id_ = st.number_input("Transverse profile", min_value=idmin, max_value=idmax, step = 1)
+            id_x = st.number_input("Longitudinal profile", min_value=0, max_value=4095,value=0, step = 1)
+
 
     # MySQL connection
     col1, col2 = st.columns(2, gap = "medium")
@@ -191,15 +194,12 @@ if check_password():
         with col2:
             with st.container():
                 st.subheader("Transverse Profile")
-                id_ = st.number_input("Transverse profile", min_value=idmin, max_value=idmax, step = 1)
                 trans_profile = transExtrac(data = st.session_state.data, data_filtered = st.session_state.data_filtered, id=id_)
                 # View and download data
                 st.download_button(label="Download transverse profile", data=trans_profile.to_csv().encode('utf-8'), file_name="transProfile_" +str(id_)+".csv", mime = "csv")
 
             with st.container():
                 st.subheader("Longitudinal Profile")
-                id_x = st.number_input("Longitudinal profile", min_value=0, max_value=4095,value=0, step = 1)
-
                 # Extract transverse profile
                 lon_profile = lonExtrac(data = st.session_state.data, data_filtered = st.session_state.data_filtered, id=id_x)
                 
