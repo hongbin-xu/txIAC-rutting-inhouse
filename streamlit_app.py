@@ -143,7 +143,7 @@ if check_password():
             with col12:
                 #heightCdf(st.session_state.data)
                 filterType = st.selectbox("Select filter", options = ["mean", "median"], index = 1)
-                kneighbors = st.selectbox("Window size", options = [3, 5, 7, 9], index =0)
+                kneighbors = st.selectbox("Window size", options = [3, 5, 7, 9, 11, 15, 25], index =0)
                 if st.button("Apply filter"):
                     st.session_state.data_filtered = dataProc(data=st.session_state.data, filterType=filterType, kneighbors=kneighbors)
             if 'data' in st.session_state:
