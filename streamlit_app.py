@@ -167,7 +167,7 @@ if check_password():
                 upper_bound = st.number_input("lower bound", min_value = st.session_state.data["height"].min(), max_value=st.session_state.data["height"].max(), value = 0.15)
 
             if st.button("Remove outliers"):
-                st.session_state.data_filtered = outlierRemove(data=st.session_state.data_filtered, lower = lower_bound, upper = upper_bound)
+                st.session_state.data_filtered = outlierRemove(data=st.session_state.data, lower = lower_bound, upper = upper_bound)
             
             st.write("Filter")
             col15, col16 = st.columns(2)
