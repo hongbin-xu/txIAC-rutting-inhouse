@@ -4,7 +4,7 @@ import numpy as np
 import plotly.express as px
 from scipy import ndimage
 import plotly.graph_objects as go
-from scipy.interpolate import interpn
+from scipy.interpolate import griddata
 
 st.set_page_config(layout="wide", 
                    page_title='IAC-Rutting Verification',
