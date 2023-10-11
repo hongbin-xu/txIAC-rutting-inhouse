@@ -155,10 +155,13 @@ if check_password():
             heightHist(st.session_state.data)
 
             st.write("Outliers")
-            st.slider("Data range to keep", min_value=st.session_state.data["height"].min(), 
-                      max_value=st.session_state.data["height"].max(), value = [st.session_state.data["height"].min(),st.session_state.data["height"].max()])
+            with col11: 
+                lower_bound = st.number_input("lower bound", min_value = st.session_state.data["height"].min(), max_value=st.session_state.data["height"].max(), value = st.session_state.data["height"].min())
+            with col12: 
+                upper_bound = st.number_input("lower bound", min_value = st.session_state.data["height"].min(), max_value=st.session_state.data["height"].max(), value = st.session_state.data["height"].max())
+
             if st.button("Remove outliers"):
-                st.session_state.data_filtered = dataProc(data=st.session_state.data, filterType=filterType, kneighbors=kneighbors)
+                st.session_state.data_filtered = outlierRemove(data=st.session_state.data, lower = lower_bound, upper=upper_bound)
             
             st.write("Filter")
             with col11:
