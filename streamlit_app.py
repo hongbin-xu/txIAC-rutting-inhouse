@@ -182,25 +182,30 @@ if check_password():
 
 
     # MySQL connection
-    col1, col2 = st.columns(2, gap = "medium")
+    col1, col2, col3 = st.columns(3)
+    st.subheader("Suface")
     with col1:
         with st.container():
-            st.subheader("Suface")
+            heightHist(data=st.session_state.data)
+    with col2:
+        with st.container():
             if 'data' in st.session_state:
                 # plot surface
                 surfOrigin(data=st.session_state.data)
+    with col3:
+        with st.container():
             if 'data_filtered' in st.session_state:
                 surFiltered(data=st.session_state.data_filtered)
-
-
+    
+    col1, col2 = st.columns(2)
     if 'data_filtered' in st.session_state:
-        with col2:
+        with col1:
             with st.container():
                 st.subheader("Transverse Profile")
                 trans_profile = transExtrac(data = st.session_state.data, data_filtered = st.session_state.data_filtered, id=id_)
                 # View and download data
                 st.download_button(label="Download transverse profile", data=trans_profile.to_csv().encode('utf-8'), file_name="transProfile_" +str(id_)+".csv", mime = "csv")
-
+        with col2:
             with st.container():
                 st.subheader("Longitudinal Profile")
                 # Extract transverse profile
