@@ -57,14 +57,14 @@ def dataLoad(_conn):#, segID=None, idmin = None, idmax=None):
     data = conn.query('SELECT * from 20mph_Grided_data_DistanceCorrected_longformat')# WHERE id BETWEEN '+ str(idmin) +' AND ' + str(idmax)+';')
     return data
 
-""" @st.cache_data
-def outlierRemove(data, lower, upper):
-    data_filtered = data.copy()
-    outlier_location = data_filtered.loc[(data_filtered["height"]<lower)|(data_filtered["height"]>upper), ["transID", "lonID"]]    
-    outlier_replace = griddata(points = (data_filtered["lonID"].values, data_filtered["transID"].values), values=data_filtered["height"].values.reshape(-1,1),
-                            xi = (outlier_location["lonID"].values, outlier_location["transID"].values), method="linear")
-    data_filtered.loc[(data_filtered["height"]<lower)|(data_filtered["height"]>upper), "height"] = outlier_replace
-    return data_filtered """
+#""" @st.cache_data
+#def outlierRemove(data, lower, upper):
+#    data_filtered = data.copy()
+#    outlier_location = data_filtered.loc[(data_filtered["height"]<lower)|(data_filtered["height"]>upper), ["transID", "lonID"]]    
+#    outlier_replace = griddata(points = (data_filtered["lonID"].values, data_filtered["transID"].values), values=data_filtered["height"].values.reshape(-1,1),
+#                            xi = (outlier_location["lonID"].values, outlier_location["transID"].values), method="linear")
+#    data_filtered.loc[(data_filtered["height"]<lower)|(data_filtered["height"]>upper), "height"] = outlier_replace
+#    return data_filtered """
 
 @st.cache_data
 def outlierRemove(data, lower, upper):
