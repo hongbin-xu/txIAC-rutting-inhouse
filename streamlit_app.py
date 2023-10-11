@@ -95,6 +95,7 @@ def heightHist(data):
 @st.cache_data
 def heightCdf(data):
     fig = px.ecdf(data, x = "height")
+    fig.update_layout(hovermode="x unified")
     st.plotly_chart(fig, use_container_width=True, theme = None)
 
 @st.cache_data
@@ -153,12 +154,11 @@ if check_password():
             col11, col12 = st.columns(2)
             with col11:
                 idmin = st.number_input("id start", min_value=0, max_value=423, value = 0, step= 1, disabled = True)
+                heightHist(st.session_state.data)
+
             with col12:
                 idmax = st.number_input("id end", min_value=idmin, max_value=424, value = 424, step= 1, disabled = True)
-           
-            st.write("Distribution of height")
-            heightHist(st.session_state.data)
-
+                heightCdf(st.session_state.data)
             st.write("Outliers")
             col13, col14 = st.columns(2)
             with col13: 
