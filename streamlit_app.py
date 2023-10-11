@@ -57,15 +57,21 @@ def dataLoad(_conn):#, segID=None, idmin = None, idmax=None):
     data = conn.query('SELECT * from 20mph_Grided_data_DistanceCorrected_longformat')# WHERE id BETWEEN '+ str(idmin) +' AND ' + str(idmax)+';')
     return data
 
-@st.cache_data
+""" @st.cache_data
 def outlierRemove(data, lower, upper):
     data_filtered = data.copy()
     outlier_location = data_filtered.loc[(data_filtered["height"]<lower)|(data_filtered["height"]>upper), ["transID", "lonID"]]    
     outlier_replace = griddata(points = (data_filtered["lonID"].values, data_filtered["transID"].values), values=data_filtered["height"].values.reshape(-1,1),
                             xi = (outlier_location["lonID"].values, outlier_location["transID"].values), method="linear")
     data_filtered.loc[(data_filtered["height"]<lower)|(data_filtered["height"]>upper), "height"] = outlier_replace
-    return data_filtered
+    return data_filtered """
 
+@st.cache_data
+def outlierRemove(data, lower, upper):
+    data_filtered = data.copy()
+    data_filtered.loc[data_filtered["height"]<lower, "height"] = lower
+    data_filtered.loc[data_filtered["height"]>upper, "height"] = upper
+    return data
 
 @st.cache_data
 def dataProc(data, filterType, kneighbors):
@@ -156,12 +162,12 @@ if check_password():
             st.write("Outliers")
             col13, col14 = st.columns(2)
             with col13: 
-                lower_bound = st.number_input("lower bound", min_value = st.session_state.data["height"].min(), max_value=st.session_state.data["height"].max(), value = st.session_state.data["height"].min())
+                lower_bound = st.number_input("lower bound", min_value = st.session_state.data["height"].min(), max_value=st.session_state.data["height"].max(), value = 0.03, disabled = True)
             with col14: 
-                upper_bound = st.number_input("lower bound", min_value = st.session_state.data["height"].min(), max_value=st.session_state.data["height"].max(), value = st.session_state.data["height"].max())
+                upper_bound = st.number_input("lower bound", min_value = st.session_state.data["height"].min(), max_value=st.session_state.data["height"].max(), value = 0.15, disabled = True)
 
             if st.button("Remove outliers"):
-                st.session_state.data_filtered = outlierRemove(data=st.session_state.data, lower = lower_bound, upper=upper_bound)
+                st.session_state.data_filtered = outlierRemove(data=st.session_state.data_filtered, lower = lower_bound, upper = upper_bound)
             
             st.write("Filter")
             col15, col16 = st.columns(2)
