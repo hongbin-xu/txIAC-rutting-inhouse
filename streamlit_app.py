@@ -155,18 +155,20 @@ if check_password():
             heightHist(st.session_state.data)
 
             st.write("Outliers")
-            with col11: 
+            col13, col14 = st.columns(2)
+            with col13: 
                 lower_bound = st.number_input("lower bound", min_value = st.session_state.data["height"].min(), max_value=st.session_state.data["height"].max(), value = st.session_state.data["height"].min())
-            with col12: 
+            with col14: 
                 upper_bound = st.number_input("lower bound", min_value = st.session_state.data["height"].min(), max_value=st.session_state.data["height"].max(), value = st.session_state.data["height"].max())
 
             if st.button("Remove outliers"):
                 st.session_state.data_filtered = outlierRemove(data=st.session_state.data, lower = lower_bound, upper=upper_bound)
             
             st.write("Filter")
-            with col11:
+            col15, col16 = st.columns(2)
+            with col15:
                 filterType = st.selectbox("Select filter", options = ["mean", "median"], index = 1)
-            with col12:
+            with col16:
                 kneighbors = st.selectbox("Window size", options = [3, 5, 7, 9, 11, 15, 25], index =0)
             if st.button("Apply"):
                 st.session_state.data_filtered = dataProc(data=st.session_state.data_filtered, filterType=filterType, kneighbors=kneighbors)
