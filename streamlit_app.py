@@ -143,7 +143,7 @@ def surFiltered(data):
 # Check authentication
 if check_password():    
     # Page title
-    conn = st.experimental_connection("mysql", type="sql")
+    conn = st.connection("mysql", type="sql")
     st.session_state.data = dataLoad(_conn=conn)
 
     with st.sidebar:
